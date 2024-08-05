@@ -87,14 +87,18 @@ class NoteController extends Controller
             'text' => $request->text,
         ]);
 
-        return to_route('notes.show', $note); 
+        return to_route('notes.show', $note)->with('success', 'Note updated successfully'); 
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Note $note)
     {
-        //
+        if($note->user_id != Auth::id()) {
+            return abort(403);
+        }
+        $note->delete();
+        return to_route('notes.index')->with('success', 'Note deleted successfully');
     }
 }
